@@ -1,0 +1,4 @@
+*.swp
+*.lock
+*.env
+.DS_Store
