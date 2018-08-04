@@ -10,11 +10,7 @@ Cop is a cli for copying files from a directory to another filtered by dates
 
 `make install-macos`
 
-#### Linux
-
-`git clone https://github.com/Waasi/cop.git`
-
-`make install-linux`
+#### Linux (Coming Soon)
 
 ## Usage
 

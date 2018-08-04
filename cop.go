@@ -1,17 +1,17 @@
 package main
 
 import(
-  "fmt"
   "os"
-  "path/filepath"
   "io"
-  "io/ioutil"
+  "fmt"
   "time"
+  "strconv"
+  "strings"
+  "io/ioutil"
+  "path/filepath"
 )
 
 func main() {
-  //currentUser, _ := user.Current()
-
   if len(os.Args) != 7 {
     fmt.Println("missing arguments")
     os.Exit(1)
@@ -26,7 +26,10 @@ func main() {
     files, _ := ioutil.ReadDir(source)
 
     for _, f := range files {
-      if inInterval(f.ModTime(), from, to) {
+      hour, min, sec := time.Time.Clock(f.ModTime())
+      time := [3]int{hour, min, sec}
+
+      if inInterval(time, from, to) {
         fmt.Println("copying", f.Name(), "to", destination)
         copyFile(filepath.Join(source, f.Name()), filepath.Join(destination, f.Name()))
       }
@@ -48,24 +51,30 @@ func validPath(pathName string) string {
   return pathName
 }
 
-func validTimeStamp(datetime string) time.Time {
-  layout := "2006-01-02T15:04 MST"
-  t, err := time.Parse(layout, datetime + " AST")
+func validTimeStamp(time string) [3]int  {
+  units := strings.Split(time, ":")
+  hour, herr := strconv.Atoi(units[0])
+  min, merr := strconv.Atoi(units[1])
+  sec, serr := strconv.Atoi(units[2])
 
-  if err != nil {
-    fmt.Println("unable to use timestamp", datetime)
+  if herr != nil || merr != nil || serr != nil {
+    fmt.Println("unable to use timestamp", time)
     os.Exit(1)
   }
 
-  return t
+  return [3]int{hour, min, sec}
 }
 
-func inInterval(timestamp time.Time, from time.Time, to time.Time) bool {
-  uTimeStamp := timestamp.Unix()
-  uFrom := from.Unix()
-  uTo := to.Unix()
-
-  return uTimeStamp >= uFrom && uTimeStamp <= uTo
+func inInterval(timestamp [3]int, from [3]int, to [3]int) bool {
+  if(timestamp[0] == from[0] || timestamp[0] == to[0]) {
+    if(timestamp[1] == from[1] || timestamp[1] == to[1]) {
+      return timestamp[2] >= from[2] && timestamp[2] <= to[2]
+    } else {
+      return timestamp[1] >= from[1] && timestamp[1] <= to[1]
+    }
+  } else {
+    return timestamp[0] >= from[0] && timestamp[0] <= to[0]
+  }
 }
 
 func copyFile(source string, destination string) bool {
