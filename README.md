@@ -19,19 +19,18 @@ filtered by the from datetime and to datetime type the following in the
 terminal:
 
 ```shell
-cop /source/path/ /destination/path --from <from_datetime> --to <to_datetime>
+cop /source/path/ /destination/path --from hour:minute:second --to hour:minute:second
 ```
 
-**Note: Dates must be in the following format: Year-Month-DayTHour:Minute
-where T is the separator between date and time.
+**Note: Times must be in the following format: hour:minute:second where `:` is the separator of units
 
 ## Example
 
-To move all files created between 01-01-2018 midnight & 01-02-2018 midnight
+To move all files created between midnight 00:00:00 and noon 12:00:00
 from /home/ubunutu to /home/ubuntu/myfiles do:
 
 ```shell
-cop /home/ubuntu /home/ubuntu/myfiles --from 2018-01-01:00:00 --to 2018-02-01:00:00
+cop /home/ubuntu /home/ubuntu/myfiles --from 00:00:00 --to 12:00:00
 ```
 
 ## Contributing
